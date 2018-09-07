@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { FlatList, Platform, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import Header from './Components/Header'
-import HeroModal from './Components/HeroModal';
-import Repo from './Components/Repo';
-import md5 from 'md5';
 import Heroes from './Components/Heroes';
+import { SearchBar, Icon } from 'react-native-elements';
+
 
 
 type Props = {};
@@ -15,12 +14,32 @@ export default class App extends Component<Props> {
   }
   componentDidMount() {
   }
-  
+  // handleSearch = (text) => {
+  //   const formatQuery = text.lowercase();
+  //   const data = _.filter(this.state.heroes, user => {
+  //     return this.contains(user, formatQuery)
+  //   });
+  //   this.setState({query: formatQuery, data});
+  // }
+
+  // contains = ({name}, query) => {
+  //   if(name.includes(query)) {
+  //     return true;      
+  //   }
+  //   return false;
+
+  // }
   render() {
     return (
       <View style={styles.container}>
         <Header headerText="MARVEL Characters" />
-        <Heroes />
+        {/* <SearchBar
+          lightTheme
+          searchIcon={<Icon name='search'/>}
+          onChangeText={this.handleSearch}
+          onClear={() => {}}
+          placeholder='Digite aqui...' /> */}
+        <Heroes/>
 
         {/* <View style={styles.header}>
           <Text style={styles.headerText}>ReactNative</Text>
