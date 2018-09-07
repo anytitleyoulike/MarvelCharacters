@@ -1,19 +1,32 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ScrollView, AsyncStorage } from 'react-native';
 import md5 from 'md5';
 import HeroModal from './HeroModal';
-
+import { SearchBar, Icon} from 'react-native-elements';
+import _ from 'lodash';
 
 
 export default class Heroes extends Component {
 
-    componentDidMount() {
-        this.fetchHeroes();
+    constructor() {
+        super();
+        this.handleSearch = this.handleSearch.bind(this);
+
+    }
+    async componentDidMount() {
+        //check if has data
+        const dataStorage = JSON.parse( await AsyncStorage.getItem('@Marvel:heroes')) || [];
+
+        if(dataStorage.length > 0) {
+            this.setState({heroes: dataStorage});
+           
+        } else {
+            this.fetchHeroes();
+        }
     }
     state = {
         modalVisible: false,
         heroes: [],
-
         example: {
             nome: 'A-Bomb (HAS)',
             img: 'http://i.annihil.us/u/prod/marvel/i/mg/3/20/5232158de5b16.jpg',
@@ -34,19 +47,33 @@ export default class Heroes extends Component {
         const response = await heroesCall.json()
 
         this.setState({ heroes: response.data.results });
-        console.log(url);
+        
+        AsyncStorage.setItem('@Marvel:heroes', JSON.stringify(this.state.heroes));
+    }
+    handleSearch = (text) => {
+        const formatText = text.toLowerCase();
+        const data = _.filter(this.state.heroes, function(obj) {
+             return obj.name.toLowerCase().includes(formatText);
+        });
+       
+        console.log(data);
     }
 
-
-    _handleClick = (event) => {
+    _handleClick = () => {
        this.setState({modalVisible: true});
     }
     render() {
         return (
             <View>
+                <SearchBar
+                    lightTheme
+                    searchIcon={<Icon name='search' />}
+                    onChangeText={this.handleSearch}
+                    onClear={() => { }}
+                    placeholder='Digite aqui...'
+                />
                 <ScrollView style={styles.heroesList}>
-
-                
+                    
                 <FlatList
                     data={this.state.heroes}
                     keyExtractor={item => item.id}
