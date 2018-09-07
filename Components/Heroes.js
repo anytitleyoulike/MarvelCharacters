@@ -10,8 +10,7 @@ export default class Heroes extends Component {
 
     constructor() {
         super();
-        this.handleSearch = this.handleSearch.bind(this);
-
+        this._handleSearch = this._handleSearch.bind(this);
     }
     async componentDidMount() {
         //check if has data
@@ -19,18 +18,23 @@ export default class Heroes extends Component {
 
         if(dataStorage.length > 0) {
             this.setState({heroes: dataStorage});
+            this.setState({fullData: dataStorage});
            
         } else {
             this.fetchHeroes();
         }
     }
+
     state = {
         modalVisible: false,
         heroes: [],
+        fullData: [],
         example: {
+            id: 1234,
             nome: 'A-Bomb (HAS)',
             img: 'http://i.annihil.us/u/prod/marvel/i/mg/3/20/5232158de5b16.jpg',
-            descricao: `Rick Jones has been Hulk's best bud since day one, but now he's more than a friend...he's a teammate!`
+            descricao: `Rick Jones has been Hulk's best bud since day one, but now he's more than a friend...he's a teammate!`,
+            favorite: true
         }
     }
 
@@ -42,33 +46,35 @@ export default class Heroes extends Component {
         const hash = md5(timeStamp + privateKey + publicKey);
 
 
-        const url = `https://gateway.marvel.com:443/v1/public/characters?&ts=${timeStamp}&apikey=${publicKey}&hash=${hash}`;
+        const url = `https://gateway.marvel.com:443/v1/public/characters?ts=${timeStamp}&apikey=${publicKey}&hash=${hash}`;
         const heroesCall = await fetch(url);
         const response = await heroesCall.json()
 
         this.setState({ heroes: response.data.results });
+        this.setState({ fullData: response.data.results });
         
         AsyncStorage.setItem('@Marvel:heroes', JSON.stringify(this.state.heroes));
     }
-    handleSearch = (text) => {
-        const formatText = text.toLowerCase();
-        const data = _.filter(this.state.heroes, function(obj) {
-             return obj.name.toLowerCase().includes(formatText);
+    _handleSearch = (text) => {
+        const query = text.toLowerCase();
+        const data = _.filter(this.state.fullData, function(obj) {
+             return obj.name.toLowerCase().includes(query);
         });
        
-        console.log(data);
+        this.setState({heroes: data});
     }
 
     _handleClick = () => {
        this.setState({modalVisible: true});
     }
+
     render() {
         return (
             <View>
                 <SearchBar
                     lightTheme
                     searchIcon={<Icon name='search' />}
-                    onChangeText={this.handleSearch}
+                    onChangeText={this._handleSearch}
                     onClear={() => { }}
                     placeholder='Digite aqui...'
                 />
@@ -101,6 +107,7 @@ export default class Heroes extends Component {
                     heroName={this.state.example.nome}
                     heroImage={this.state.example.img}
                     heroDescricao={this.state.example.descricao}
+                    heroFav={this.state.example.favorite}
                     
                     onCancel={() => { this.setState({ modalVisible: false }) }}
                     onAdd={() => {}}
