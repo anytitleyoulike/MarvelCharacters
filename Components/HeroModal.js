@@ -10,16 +10,16 @@ export default class HeroModal extends Component {
     render() {
         return (
             <Modal animationType="fade" transparent={true} visible={this.props.modalVisible} onRequestClose={() => { }}>
-                <View style={styles.modalContainer}>
+                <View style={styles.modalBackground}>
                     <View style={styles.boxContainer}>
-                        <Text style={styles.boxTitle}>{this.props.heroName}</Text>
+                        <Text style={styles.heroTitle}>{this.props.heroName}</Text>
                         <Image
                             style={styles.heroImage}
-                            source={{ uri: this.props.image }}
+                            source={{ uri: this.props.heroImage }}
                         />
 
                         <View style={styles.heroInfo}>
-                            <Text style={styles.author} ellipsizeMode="tail">{this.props.heroDescricao || "Character have no descripiton"}</Text>
+                            <Text style={styles.heroDescription} ellipsizeMode="tail">{this.props.heroDescricao || "Character have no descripiton"}</Text>
                         </View>
                         <View style={styles.buttonContainer}>
 
@@ -27,7 +27,7 @@ export default class HeroModal extends Component {
                                 style={[styles.button, styles.cancelButton]}
                                 onPress={this.props.onCancel}>
 
-                                <Text style={styles.buttonText}>Cancelar</Text>
+                                <Text style={styles.buttonText}>Voltar</Text>
 
                             </TouchableOpacity>
 
@@ -35,7 +35,7 @@ export default class HeroModal extends Component {
                                 style={[styles.button, styles.submitButton]}
                                 onPress={this.props.onAdd(this.state.newRepoText)}>
 
-                                <Text style={styles.buttonText}>Adicionar</Text>
+                                <Text style={styles.buttonText}>Favorite</Text>
 
                             </TouchableOpacity>
                         </View>
@@ -47,35 +47,42 @@ export default class HeroModal extends Component {
 }
 
 const styles = StyleSheet.create({
-    modalContainer: {
+    modalBackground: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.7)',
         justifyContent: 'center',
         alignItems: 'center'
+        
     },
     heroImage: {
+        width: 80,
+        height: 80,
+        marginBottom: 10,
+    },
+    heroInfo: {
+        marginHorizontal: 10,
+        height: 70,
+        width: 220,
+        textAlign: 'justify',
+    },
+    heroDescription: {
+        fontSize: 15,
+        color: '#999'
     },
     boxContainer: {
+        backgroundColor: 'white',
         padding: 20,
-        backgroundColor: 'rgba(194, 194, 79, 1)',
         borderRadius: 10,
         alignItems: 'center',
         width: 280,
     },
-    boxTitle: {
+    heroTitle: {
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 20,
+        color: 'black',
+        paddingBottom: 10
     },
-    boxInput: {
-        alignSelf: 'stretch',
-        marginTop: 10,
-        paddingVertical: 0,
-        paddingHorizontal: 20,
-        borderWidth: 1,
-        borderColor: '#DDD',
-        height: 40,
-        borderRadius: 3
-    },
+
     buttonContainer: {
         marginTop: 10,
         height: 40,
@@ -93,7 +100,7 @@ const styles = StyleSheet.create({
     },
 
     submitButton: {
-        backgroundColor: '#70bd85',
+        backgroundColor: 'rgba(59, 197, 243, 1)',
         marginLeft: 5
     },
 

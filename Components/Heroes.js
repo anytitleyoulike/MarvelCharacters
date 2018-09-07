@@ -61,7 +61,7 @@ export default class Heroes extends Component {
 
                                     <View style={styles.heroInfo}>
                                         <Text style={styles.heroTitle}>{item.name}</Text>
-                                        <Text style={styles.author} numberOfLines={3} ellipsizeMode="tail">{item.description || "Character have no descripiton"}</Text>
+                                        <Text style={styles.heroDescription} numberOfLines={3} ellipsizeMode="tail">{item.description || "Character have no descripiton"}</Text>
                                     </View>
 
                                 </View>
