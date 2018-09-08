@@ -5,7 +5,6 @@ import HeroModal from './HeroModal';
 import { SearchBar, Icon} from 'react-native-elements';
 import _ from 'lodash';
 
-
 export default class Heroes extends Component {
 
     constructor() {
@@ -17,10 +16,14 @@ export default class Heroes extends Component {
         const dataStorage = JSON.parse( await AsyncStorage.getItem('@Marvel:heroes')) || [];
 
         if(dataStorage.length > 0) {
-            this.setState({heroes: dataStorage});
-            this.setState({fullData: dataStorage});
+            console.log('data from storage');
+            this.setState({
+                heroes: dataStorage,
+                fullData: dataStorage
+            });
            
         } else {
+            console.log('data from api');
             this.fetchHeroes();
         }
     }
@@ -29,15 +32,16 @@ export default class Heroes extends Component {
         modalVisible: false,
         heroes: [],
         fullData: [],
-        example: {
-            id: 1234,
-            nome: 'A-Bomb (HAS)',
-            img: 'http://i.annihil.us/u/prod/marvel/i/mg/3/20/5232158de5b16.jpg',
-            descricao: `Rick Jones has been Hulk's best bud since day one, but now he's more than a friend...he's a teammate!`,
-            favorite: true
+        hero: {
+            name: '',
+            description: '',
+            thumbnail: {
+                path: '',
+                extension: ''
+            },
+            favorite: false
         }
     }
-
 
     fetchHeroes = async () => {
         const privateKey = '6ff5c79f8348872cc1e726a9442f99fe94281cbb';
@@ -46,12 +50,16 @@ export default class Heroes extends Component {
         const hash = md5(timeStamp + privateKey + publicKey);
 
 
-        const url = `https://gateway.marvel.com:443/v1/public/characters?ts=${timeStamp}&apikey=${publicKey}&hash=${hash}`;
+        const url = `https://gateway.marvel.com:443/v1/public/characters?&ts=${timeStamp}&apikey=${publicKey}&hash=${hash}`;
         const heroesCall = await fetch(url);
         const response = await heroesCall.json()
 
-        this.setState({ heroes: response.data.results });
-        this.setState({ fullData: response.data.results });
+        console.log('fetch heroes');
+        
+        this.setState({
+            heroes: response.data.results,
+            fullData: response.data.results
+        });
         
         AsyncStorage.setItem('@Marvel:heroes', JSON.stringify(this.state.heroes));
     }
@@ -64,8 +72,15 @@ export default class Heroes extends Component {
         this.setState({heroes: data});
     }
 
-    _handleClick = () => {
-       this.setState({modalVisible: true});
+    _handleClick = async (id) => {
+        await this._getInfoModal(id);
+        this.setState({modalVisible: true});
+    }
+    _getInfoModal = (id) => {
+        let data = this.state.heroes.find((hero) => {
+            return id === hero.id;
+        });
+        this.setState({ hero: data });
     }
 
     render() {
@@ -85,7 +100,7 @@ export default class Heroes extends Component {
                     keyExtractor={item => item.id}
                     renderItem={({ item }) => {
                         return (
-                            <TouchableOpacity key={item.id} onPress={ this._handleClick }>
+                            <TouchableOpacity key={item.id} onPress={ () => { this._handleClick(item.id)} }>
                                 <View style={styles.box}>
                                     <Image
                                         style={styles.heroImage}
@@ -94,7 +109,7 @@ export default class Heroes extends Component {
 
                                     <View style={styles.heroInfo}>
                                         <Text style={styles.heroTitle}>{item.name}</Text>
-                                        <Text style={styles.heroDescription} numberOfLines={3} ellipsizeMode="tail">{item.description || "Character have no descripiton"}</Text>
+                                        <Text style={styles.heroDescription} numberOfLines={3} ellipsizeMode="tail">{item.description || "Character have no description"}</Text>
                                     </View>
 
                                 </View>
@@ -104,14 +119,15 @@ export default class Heroes extends Component {
                 />
                 </ScrollView>
                 <HeroModal modalVisible={this.state.modalVisible}
-                    heroName={this.state.example.nome}
-                    heroImage={this.state.example.img}
-                    heroDescricao={this.state.example.descricao}
-                    heroFav={this.state.example.favorite}
+                    heroName={this.state.hero.name}
+                    heroImage={this.state.hero.thumbnail.path + '.' + this.state.hero.thumbnail.extension}
+                    heroDescricao={this.state.hero.description}
+                    heroFav={this.state.hero.favorite}
                     
-                    onCancel={() => { this.setState({ modalVisible: false }) }}
+                    onCancel={() => { this.setState({ modalVisible: false });}}
                     onAdd={() => {}}
                 />
+
             </View>
         )
     }

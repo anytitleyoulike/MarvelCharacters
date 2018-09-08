@@ -6,7 +6,7 @@ export default class HeroModal extends Component {
     state = {
         newRepoText: '',
     }
-    
+
     render() {
         return (
             <Modal animationType="fade" transparent={true} visible={this.props.modalVisible} onRequestClose={() => { }}>
@@ -19,7 +19,7 @@ export default class HeroModal extends Component {
                         />
 
                         <View style={styles.heroInfo}>
-                            <Text style={styles.heroDescription} ellipsizeMode="tail">{this.props.heroDescricao || "Character have no descripiton"}</Text>
+                            <Text style={styles.heroDescription} ellipsizeMode="tail">{this.props.heroDescricao || "Character have no description"}</Text>
                         </View>
                         <View style={styles.buttonContainer}>
 
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     },
     heroInfo: {
         marginHorizontal: 10,
-        height: 70,
         width: 220,
         textAlign: 'justify',
     },
@@ -71,10 +70,11 @@ const styles = StyleSheet.create({
     },
     boxContainer: {
         backgroundColor: 'white',
-        padding: 20,
+        padding: 15,
         borderRadius: 10,
         alignItems: 'center',
         width: 280,
+        maxHeight: 500
     },
     heroTitle: {
         fontWeight: 'bold',
