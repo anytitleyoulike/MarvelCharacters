@@ -12,6 +12,10 @@ export default class Heroes extends Component {
         super();
         this._handleSearch = this._handleSearch.bind(this);
     }
+
+    componentDidUpdate() {
+        console.log('did update', this.state.modalHero);
+    }
     async componentDidMount() {
         //check if has data
         const dataStorage = JSON.parse( await AsyncStorage.getItem('@Marvel:heroes')) || [];
@@ -33,7 +37,7 @@ export default class Heroes extends Component {
         modalVisible: false,
         heroes: [],
         fullData: [],
-        hero: {
+        modalHero: {
             name: '',
             description: '',
             thumbnail: {
@@ -77,11 +81,25 @@ export default class Heroes extends Component {
         await this._getInfoModal(id);
         this.setState({modalVisible: true});
     }
+
     _getInfoModal = (id) => {
         let data = this.state.heroes.find((hero) => {
             return id === hero.id;
         });
-        this.setState({ hero: data });
+        this.setState({ modalHero: data });
+    }
+
+    _favoriteHero = () => {
+        console.log('favoritou');
+
+        // let data = this.state.heroes.filter((hero) => {
+        //     return this. === hero.id;
+        // });
+
+        console.log(this.state.modalHero.id);
+        // this.setState({
+        //     ...this.state.hero, favorite: true
+        // }); 
     }
 
     render() {
@@ -114,13 +132,13 @@ export default class Heroes extends Component {
 
                 <HeroModal 
                     modalVisible={this.state.modalVisible}
-                    heroName={this.state.hero.name}
-                    heroImage={this.state.hero.thumbnail.path + '.' + this.state.hero.thumbnail.extension}
-                    heroDescricao={this.state.hero.description}
-                    heroFav={this.state.hero.favorite}
+                    heroName={this.state.modalHero.name}
+                    heroImage={this.state.modalHero.thumbnail.path + '.' + this.state.modalHero.thumbnail.extension}
+                    heroDescricao={this.state.modalHero.description}
+                    heroFav={this.state.modalHero.favorite}
                     
-                    onCancel={() => { this.setState({ modalVisible: false });}}
-                    onAdd={() => {}}
+                    onCancel={() => { this.setState({ modalVisible: false})}}
+                    onAdd={() => {this._favoriteHero()}}
                 />
 
             </View>
