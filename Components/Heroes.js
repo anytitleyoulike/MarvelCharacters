@@ -14,12 +14,12 @@ export default class Heroes extends Component {
     }
 
     componentDidUpdate() {
-        console.log('did update', this.state.modalHero);
+        // console.log('did update', this.state.modalHero);
     }
     async componentDidMount() {
         //check if has data
         const dataStorage = JSON.parse( await AsyncStorage.getItem('@Marvel:heroes')) || [];
-
+ 
         if(dataStorage.length > 0) {
             console.log('data from storage');
             this.setState({
@@ -44,7 +44,7 @@ export default class Heroes extends Component {
                 path: '',
                 extension: ''
             },
-            favorite: false
+            favorite: ''
         }
     }
 
@@ -56,14 +56,27 @@ export default class Heroes extends Component {
 
 
         const url = `https://gateway.marvel.com:443/v1/public/characters?&ts=${timeStamp}&apikey=${publicKey}&hash=${hash}`;
-        const heroesCall = await fetch(url);
-        const response = await heroesCall.json()
+        const heroesData = await fetch(url);
+        const response = await heroesData.json()
 
         console.log('fetch heroes');
         
+        let data = response.data.results.map(i =>{ 
+           return  obj = {
+                id: i.id,
+                name: i.name,
+                description: i.description,
+                thumbnail: {
+                    path: i.thumbnail.path,
+                    extension: i.thumbnail.extension
+                },
+                favorite: false
+            }
+        })
+
         this.setState({
-            heroes: response.data.results,
-            fullData: response.data.results
+            heroes: data,
+            fullData: data
         });
         
         AsyncStorage.setItem('@Marvel:heroes', JSON.stringify(this.state.heroes));
@@ -87,19 +100,27 @@ export default class Heroes extends Component {
             return id === hero.id;
         });
         this.setState({ modalHero: data });
+
     }
 
     _favoriteHero = () => {
         console.log('favoritou');
 
         // let data = this.state.heroes.filter((hero) => {
-        //     return this. === hero.id;
+        //     return this.state.modalHero.id === hero.id;
         // });
+        let data = Object.assign({}, this.state.modalHero);
+        if(!data.favorite) {
+            data = Object.assign(data, { favorite: true })
+        } else {
+            data = Object.assign(data, { favorite: false })
+        }
+        // console.log('clone atualizado', data);
 
-        console.log(this.state.modalHero.id);
-        // this.setState({
-        //     ...this.state.hero, favorite: true
-        // }); 
+        this.setState({
+            modalHero: data,
+        });
+    
     }
 
     render() {
@@ -118,7 +139,7 @@ export default class Heroes extends Component {
                         keyExtractor={item => item.id}
                         renderItem={({ item }) => {
                             return (
-                                <TouchableOpacity key={item.id} onPress={ () => { this._handleClick(item.id)} }>
+                                <TouchableOpacity key={item.id} onPress={ () => this._handleClick(item.id) }>
                                     <HeroList 
                                         name={item.name} 
                                         description={item.description} 
@@ -137,7 +158,7 @@ export default class Heroes extends Component {
                     heroDescricao={this.state.modalHero.description}
                     heroFav={this.state.modalHero.favorite}
                     
-                    onCancel={() => { this.setState({ modalVisible: false})}}
+                    onCancel={() => { this.setState({ modalVisible: false}); }}
                     onAdd={() => {this._favoriteHero()}}
                 />
 

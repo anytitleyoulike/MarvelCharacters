@@ -30,12 +30,12 @@ export default class HeroModal extends Component {
                                 <Text style={styles.buttonText}>Voltar</Text>
 
                             </TouchableOpacity>
-
+                        
                             <TouchableOpacity
-                                style={[styles.button, styles.submitButton]}
-                                onPress={this.props.onAdd(this.state.newRepoText)}>
+                                style={[styles.button, this.props.heroFav === false ? styles.favorite : styles.unfavorite]}
+                                onPress={this.props.onAdd}>
 
-                                <Text style={styles.buttonText}>Favorite</Text>
+                                <Text style={styles.buttonText}>{this.props.heroFav === false ? 'Favorito' : 'Desmarcar'}</Text>
 
                             </TouchableOpacity>
                         </View>
@@ -99,8 +99,12 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
 
-    submitButton: {
+    favorite: {
         backgroundColor: 'rgba(59, 197, 243, 1)',
+        marginLeft: 5
+    },
+    unfavorite: {
+        backgroundColor: 'rgba(176, 189, 193, 1)',
         marginLeft: 5
     },
 
