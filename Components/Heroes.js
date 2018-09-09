@@ -103,23 +103,34 @@ export default class Heroes extends Component {
 
     }
 
-    _favoriteHero = () => {
-        console.log('favoritou');
+    _clickFavorite = async (id) => {
+        let hero = this.state.heroes.filter((hero) => {
+            return id === hero.id;
+        });
+        
+        let index = this.state.heroes.findIndex((item) => {
+            return item.id == id;
+        });
+        
+        let data = Object.assign({}, hero[0]);
 
-        // let data = this.state.heroes.filter((hero) => {
-        //     return this.state.modalHero.id === hero.id;
-        // });
-        let data = Object.assign({}, this.state.modalHero);
         if(!data.favorite) {
             data = Object.assign(data, { favorite: true })
+            console.log('favoritou');
         } else {
             data = Object.assign(data, { favorite: false })
+            console.log('removeu fav');
         }
-        // console.log('clone atualizado', data);
+    
+        let previousState = this.state.heroes;
+        previousState[index] = data;
 
         this.setState({
             modalHero: data,
+            heroes: previousState,
         });
+
+        await AsyncStorage.setItem('@Marvel:heroes', JSON.stringify(this.state.heroes));
     
     }
 
@@ -159,7 +170,7 @@ export default class Heroes extends Component {
                     heroFav={this.state.modalHero.favorite}
                     
                     onCancel={() => { this.setState({ modalVisible: false}); }}
-                    onAdd={() => {this._favoriteHero()}}
+                    onAdd={() => {this._clickFavorite(this.state.modalHero.id)}}
                 />
 
             </View>
