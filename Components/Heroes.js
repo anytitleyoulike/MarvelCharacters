@@ -24,7 +24,8 @@ export default class Heroes extends Component {
             console.log('data from storage');
             this.setState({
                 heroes: dataStorage,
-                fullData: dataStorage
+                fullData: dataStorage,
+                heroList: dataStorage
             });
            
         } else {
@@ -76,7 +77,8 @@ export default class Heroes extends Component {
 
         this.setState({
             heroes: data,
-            fullData: data
+            fullData: data,
+            heroList: data
         });
         
         AsyncStorage.setItem('@Marvel:heroes', JSON.stringify(this.state.heroes));
@@ -87,7 +89,7 @@ export default class Heroes extends Component {
              return obj.name.toLowerCase().includes(query);
         });
        
-        this.setState({heroes: data});
+        this.setState({heroList: data});
     }
 
     _handleClick = async (id) => {
@@ -146,7 +148,7 @@ export default class Heroes extends Component {
                 />
                 <ScrollView style={styles.container}>     
                     <FlatList
-                        data={this.state.heroes}
+                        data={this.state.heroList}
                         keyExtractor={item => item.id}
                         renderItem={({ item }) => {
                             return (
