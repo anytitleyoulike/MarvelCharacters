@@ -35,8 +35,7 @@ const styles = StyleSheet.create({
     },
     heroImage: {
         width: 50,
-        height: 50,
-        borderRadius: 25,
+        height: 70
     },
     heroInfo: {
         marginHorizontal: 10,
